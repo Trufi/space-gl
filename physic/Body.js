@@ -15,6 +15,8 @@ export default class Body {
     }
 
     step(dt) {
+        if (this.mass === 0) { return; }
+
         this.velocity[0] += this.force[0] / this.mass * dt;
         this.velocity[1] += this.force[1] / this.mass * dt;
 

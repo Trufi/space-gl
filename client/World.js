@@ -8,11 +8,13 @@ export default class World {
         this.renderer = new dgl.Renderer({
             canvas: 'canvas'
         });
-        this.renderer.setSize(window.offsetWidth, window.offsetHeight);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         this.scene = new dgl.Scene();
 
-        this.camera = new dgl.PerspectiveCamera();
+        this.camera = new dgl.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+        this.camera.position[2] = 50;
+        this.camera.updateProjectionMatrix();
 
         this.bodies = {};
 
@@ -26,18 +28,19 @@ export default class World {
     addBody(body) {
         this.world.addBody(body.body);
         this.scene.add(body.mesh);
+        this.bodies[body.id] = body;
     }
 
     _loop() {
         requestAnimationFrame(this._loop);
 
         const now = Date.now();
-        const dt = this._lastTimeUpdate - now;
+        const dt = now - this._lastTimeUpdate;
 
         this.world.step(dt);
 
-        for (const id in this._bodies) {
-            this._bodies[id].update(dt);
+        for (const id in this.bodies) {
+            this.bodies[id].update(dt);
         }
 
         this.renderer.render(this.scene, this.camera);
