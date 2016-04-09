@@ -24,6 +24,7 @@ export default class Body {
         geometry.setBuffer('position', positionBuffer);
 
         const program = new dgl.BasicMeshProgram();
+        program.color = [0.7, 0.2, 0];
         const mesh = new dgl.Mesh(geometry, program);
         mesh.position[0] = -1;
         mesh.position[1] = -1.5;
@@ -40,5 +41,25 @@ export default class Body {
         this.mesh.position[1] = this.body.position[1];
         dgl.quat.setAxisAngle(this.mesh.quaternion, this._rotateAxis, this.body.angle);
         this.mesh.updateLocalMatrix();
+    }
+
+    thrust() {
+        const d = 1;
+        this.body.velocity[0] += d * Math.cos(this.body.angle);
+        this.body.velocity[1] += d * Math.sin(this.body.angle);
+    }
+
+    reverse() {
+        const d = 1;
+        this.body.velocity[0] -= d * Math.cos(this.body.angle);
+        this.body.velocity[1] -= d * Math.sin(this.body.angle);
+    }
+
+    left() {
+        this.body.angularVelocity -= 1;
+    }
+
+    right() {
+        this.body.angularVelocity += 1;
     }
 }

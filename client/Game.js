@@ -1,12 +1,16 @@
+import EventEmitter from 'events';
 import dgl from '2gl';
 import P from '../physic';
 
-export default class World {
+export default class Game extends EventEmitter {
     constructor() {
+        super();
+
         this.world = new P.World();
 
         this.renderer = new dgl.Renderer({
-            canvas: 'canvas'
+            canvas: 'canvas',
+            clearColor: [0, 0, 0, 1]
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -31,11 +35,18 @@ export default class World {
         this.bodies[body.id] = body;
     }
 
+    addPlayer(player) {
+        this._player = player;
+        player.addGame(this);
+    }
+
     _loop() {
         requestAnimationFrame(this._loop);
 
         const now = Date.now();
         const dt = now - this._lastTimeUpdate;
+
+        this.emit('update', {now: now, dt: dt});
 
         this.world.step(dt);
 
