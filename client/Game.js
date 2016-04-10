@@ -13,13 +13,14 @@ export default class Game extends EventEmitter {
             canvas: 'canvas',
             clearColor: [0, 0, 0, 1]
         });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         this.scene = new dgl.Scene();
 
-        this.camera = new dgl.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+        this.camera = new dgl.PerspectiveCamera(45, 0, 1, 100000);
         this.camera.position[2] = 50;
-        this.camera.updateProjectionMatrix();
+
+        this._updateSize();
+        window.addEventListener('resize', this._updateSize.bind(this));
 
         this.bodies = {};
 
@@ -39,6 +40,14 @@ export default class Game extends EventEmitter {
     addPlayer(player) {
         this._player = player;
         player.addGame(this);
+    }
+
+    _updateSize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        this.renderer.setSize(width, height);
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
     }
 
     _loop() {

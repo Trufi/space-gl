@@ -1,18 +1,14 @@
- import Body from './Body';
+ import Ship from './Ship';
  import Game from './Game';
  import Player from './Player/Player';
 
  const game = new Game();
 
- const body = new Body();
- // body.body.velocity[1] = 5 / 1000;
- // body.body.angularVelocity = 1 / 1000;
- body.body.mass = 10;
- body.body.angle = Math.PI / 5;
+ const ship = new Ship();
 
  const player = new Player();
- player.setBody(body);
+ player.setShip(ship);
 
- game.addBody(body);
+ game.addBody(ship);
 
  game.addPlayer(player);

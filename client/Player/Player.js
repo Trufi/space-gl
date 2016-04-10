@@ -12,8 +12,8 @@ export default class Player extends EventEmitter {
         this._onUpdate = this._onUpdate.bind(this);
     }
 
-    setBody(body) {
-        this._body = body;
+    setShip(ship) {
+        this._ship = ship;
     }
 
     addGame(game) {
@@ -31,17 +31,17 @@ export default class Player extends EventEmitter {
             key = Number(key);
 
             if (key === Keyboard.FORWARD) {
-                this._body.useAction('thrust');
+                this._ship.useAction('thrust');
             } else if (key === Keyboard.BACK) {
-                this._body.useAction('reverse');
+                this._ship.useAction('reverse');
             } else if (key === Keyboard.LEFT) {
-                this._body.useAction('left');
+                this._ship.useAction('left');
             } else if (key === Keyboard.RIGHT) {
-                this._body.useAction('right');
+                this._ship.useAction('right');
             } else if (key === Keyboard.STRAFE_LEFT) {
-                this._body.useAction('strafeLeft');
+                this._ship.useAction('strafeLeft');
             } else if (key === Keyboard.STRAFE_RIGHT) {
-                this._body.useAction('strafeRight');
+                this._ship.useAction('strafeRight');
             }
         }
     }
