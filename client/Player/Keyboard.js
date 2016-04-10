@@ -7,28 +7,24 @@ export default class Keyboard {
     }
 
     getPressedKeys() {
-        const result = this._pressedKeys;
-        this._pressedKeys = {};
-        return result;
+        return this._pressedKeys;
     }
 
     _initEvents() {
-        this._onKeypress = this._onKeypress.bind(this);
-        window.addEventListener('keypress', this._onKeypress);
+        window.addEventListener('keydown', this._onKeyDown.bind(this));
+        window.addEventListener('keyup', this._onKeyUp.bind(this));
     }
 
-    _onKeypress(ev) {
+    _onKeyDown(ev) {
         const key = ev.which;
 
-        if (key === 119) {
-            this._pressedKeys[Keyboard.FORWARD] = true;
-        } else if (key === 115) {
-            this._pressedKeys[Keyboard.BACK] = true;
-        } else if (key === 97) {
-            this._pressedKeys[Keyboard.LEFT] = true;
-        } else if (key === 100) {
-            this._pressedKeys[Keyboard.RIGHT] = true;
-        }
+        this._pressedKeys[Keyboard.keyMap[key]] = true;
+    }
+
+    _onKeyUp(ev) {
+        const key = ev.which;
+
+        this._pressedKeys[Keyboard.keyMap[key]] = false;
     }
 }
 
@@ -36,3 +32,14 @@ Keyboard.FORWARD = 1;
 Keyboard.BACK = 2;
 Keyboard.LEFT = 3;
 Keyboard.RIGHT = 4;
+Keyboard.STRAFE_LEFT = 5;
+Keyboard.STRAFE_RIGHT = 6;
+
+Keyboard.keyMap = {
+    87: Keyboard.FORWARD,
+    83: Keyboard.BACK,
+    65: Keyboard.LEFT,
+    68: Keyboard.RIGHT,
+    81: Keyboard.STRAFE_LEFT,
+    69: Keyboard.STRAFE_RIGHT
+};

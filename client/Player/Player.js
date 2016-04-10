@@ -26,16 +26,22 @@ export default class Player extends EventEmitter {
         const pressedKeys = this._keyboard.getPressedKeys();
 
         for (let key in pressedKeys) {
+            if (pressedKeys[key] === false) { continue; }
+
             key = Number(key);
 
             if (key === Keyboard.FORWARD) {
-                this._body.thrust();
+                this._body.useAction('thrust');
             } else if (key === Keyboard.BACK) {
-                this._body.reverse();
+                this._body.useAction('reverse');
             } else if (key === Keyboard.LEFT) {
-                this._body.left();
+                this._body.useAction('left');
             } else if (key === Keyboard.RIGHT) {
-                this._body.right();
+                this._body.useAction('right');
+            } else if (key === Keyboard.STRAFE_LEFT) {
+                this._body.useAction('strafeLeft');
+            } else if (key === Keyboard.STRAFE_RIGHT) {
+                this._body.useAction('strafeRight');
             }
         }
     }

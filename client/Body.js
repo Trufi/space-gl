@@ -1,11 +1,26 @@
 import dgl from '2gl';
 import P from '../physic';
+import Thrust from './actions/Thrust';
+import Reverse from './actions/Reverse';
+import Left from './actions/Left';
+import Right from './actions/Right';
+import StrafeLeft from './actions/StrafeLeft';
+import StrafeRight from './actions/StrafeRight';
 
 let idCounter = 0;
 
 export default class Body {
     constructor() {
         this.id = idCounter++;
+
+        this.actions = {
+            thrust: new Thrust(this),
+            reverse: new Reverse(this),
+            left: new Left(this),
+            right: new Right(this),
+            strafeLeft: new StrafeLeft(this),
+            strafeRight: new StrafeRight(this)
+        };
 
         this.body = new P.Body();
 
@@ -35,8 +50,8 @@ export default class Body {
 
         this._rotateAxis = dgl.vec3.fromValues(0, 0, -1);
 
-        this._thrustForce = 0.0003;
-        this._rotateForce = 0.0001;
+        this.thrustForce = 0.0003;
+        this.rotateForce = 0.0002;
     }
 
     update(dt) {
@@ -46,21 +61,31 @@ export default class Body {
         this.mesh.updateLocalMatrix();
     }
 
+    updateActions(now) {
+        for (const name in this.actions) {
+            this.actions[name].update(now);
+        }
+    }
+
+    useAction(name) {
+        this.actions[name].use();
+    }
+
     thrust() {
-        this.body.force[0] += this._thrustForce * Math.sin(this.body.angle);
-        this.body.force[1] += this._thrustForce * Math.cos(this.body.angle);
+        this.body.force[0] = this.thrustForce * Math.sin(this.body.angle);
+        this.body.force[1] = this.thrustForce * Math.cos(this.body.angle);
     }
 
     reverse() {
-        this.body.force[0] -= this._thrustForce * Math.sin(this.body.angle);
-        this.body.force[1] -= this._thrustForce * Math.cos(this.body.angle);
+        this.body.force[0] = -this.thrustForce * Math.sin(this.body.angle);
+        this.body.force[1] = -this.thrustForce * Math.cos(this.body.angle);
     }
 
     left() {
-        this.body.angularForce -= this._rotateForce;
+        this.body.angularForce = this.rotateForce;
     }
 
     right() {
-        this.body.angularForce += this._rotateForce;
+        this.body.angularForce = -this.rotateForce;
     }
 }

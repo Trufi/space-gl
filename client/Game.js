@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import dgl from '2gl';
 import P from '../physic';
+import time from './utils/time';
 
 export default class Game extends EventEmitter {
     constructor() {
@@ -45,8 +46,12 @@ export default class Game extends EventEmitter {
 
         requestAnimationFrame(this._loop);
 
-        const now = Date.now();
+        const now = time();
         const dt = now - this._lastTimeUpdate;
+
+        for (const id in this.bodies) {
+            this.bodies[id].updateActions(now);
+        }
 
         this.emit('update', {now: now, dt: dt});
 
