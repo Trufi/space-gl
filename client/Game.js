@@ -41,6 +41,8 @@ export default class Game extends EventEmitter {
     }
 
     _loop() {
+        this.emit('frameStart');
+
         requestAnimationFrame(this._loop);
 
         const now = Date.now();
@@ -56,6 +58,10 @@ export default class Game extends EventEmitter {
 
         this.renderer.render(this.scene, this.camera);
 
+        this.emit('render', {now: now, dt: dt});
+
         this._lastTimeUpdate = now;
+
+        this.emit('frameEnd');
     }
 }

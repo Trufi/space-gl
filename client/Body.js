@@ -33,7 +33,10 @@ export default class Body {
         this.mesh = new dgl.Object3D();
         this.mesh.add(mesh);
 
-        this._rotateAxis = dgl.vec3.fromValues(0, 0, 1);
+        this._rotateAxis = dgl.vec3.fromValues(0, 0, -1);
+
+        this._thrustForce = 0.0003;
+        this._rotateForce = 0.0001;
     }
 
     update(dt) {
@@ -44,22 +47,20 @@ export default class Body {
     }
 
     thrust() {
-        const d = 1;
-        this.body.velocity[0] += d * Math.cos(this.body.angle);
-        this.body.velocity[1] += d * Math.sin(this.body.angle);
+        this.body.force[0] += this._thrustForce * Math.sin(this.body.angle);
+        this.body.force[1] += this._thrustForce * Math.cos(this.body.angle);
     }
 
     reverse() {
-        const d = 1;
-        this.body.velocity[0] -= d * Math.cos(this.body.angle);
-        this.body.velocity[1] -= d * Math.sin(this.body.angle);
+        this.body.force[0] -= this._thrustForce * Math.sin(this.body.angle);
+        this.body.force[1] -= this._thrustForce * Math.cos(this.body.angle);
     }
 
     left() {
-        this.body.angularVelocity -= 1;
+        this.body.angularForce -= this._rotateForce;
     }
 
     right() {
-        this.body.angularVelocity += 1;
+        this.body.angularForce += this._rotateForce;
     }
 }

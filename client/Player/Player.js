@@ -1,8 +1,13 @@
+import EventEmitter from 'events';
 import Keyboard from './Keyboard';
+import Debug from './Debug';
 
-export default class Player {
+export default class Player extends EventEmitter {
     constructor() {
+        super();
+
         this._keyboard = new Keyboard(this);
+        this._debug = new Debug(this);
 
         this._onUpdate = this._onUpdate.bind(this);
     }
@@ -14,6 +19,7 @@ export default class Player {
     addGame(game) {
         this._game = game;
         this._game.on('update', this._onUpdate);
+        this.emit('addGame');
     }
 
     _onUpdate() {

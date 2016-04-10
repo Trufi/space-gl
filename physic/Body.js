@@ -17,15 +17,17 @@ export default class Body {
     step(dt) {
         if (this.mass === 0) { return; }
 
-        const ds = dt / 1000;
+        this.velocity[0] += this.force[0] / this.mass * dt;
+        this.velocity[1] += this.force[1] / this.mass * dt;
 
-        this.velocity[0] += this.force[0] / this.mass * ds;
-        this.velocity[1] += this.force[1] / this.mass * ds;
+        this.position[0] += this.velocity[0] * dt;
+        this.position[1] += this.velocity[1] * dt;
 
-        this.position[0] += this.velocity[0] * ds;
-        this.position[1] += this.velocity[1] * ds;
+        this.angularVelocity += this.angularForce / this.mass * dt;
+        this.angle += this.angularVelocity * dt;
 
-        this.angularVelocity += this.angularForce / this.mass * ds;
-        this.angle += this.angularVelocity * ds;
+        this.force[0] = 0;
+        this.force[1] = 0;
+        this.angularForce = 0;
     }
 }
