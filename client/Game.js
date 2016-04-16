@@ -70,6 +70,8 @@ export default class Game extends EventEmitter {
             this.bodies[id].update(dt);
         }
 
+        this._updateCamera();
+
         this.renderer.render(this.scene, this.camera);
 
         this.emit('render', {now: now, dt: dt});
@@ -77,5 +79,15 @@ export default class Game extends EventEmitter {
         this._lastTimeUpdate = now;
 
         this.emit('frameEnd');
+    }
+
+    _updateCamera() {
+        if (this._player && this._player._ship) {
+            const position = this._player._ship.body.position;
+
+            this.camera.position[0] = position[0];
+            this.camera.position[1] = position[1];
+            this.camera.updateLocalMatrix();
+        }
     }
 }

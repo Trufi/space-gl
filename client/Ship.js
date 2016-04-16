@@ -55,13 +55,6 @@ export default class Ship extends Body {
         this.rotateForce = 0.0002;
     }
 
-    update(dt) {
-        this.mesh.position[0] = this.body.position[0];
-        this.mesh.position[1] = this.body.position[1];
-        dgl.quat.setAxisAngle(this.mesh.quaternion, this._rotateAxis, this.body.angle);
-        this.mesh.updateLocalMatrix();
-    }
-
     updateActions(now) {
         for (const name in this.actions) {
             this.actions[name].update(now);
