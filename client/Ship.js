@@ -27,12 +27,8 @@ export default class Ship extends Body {
 
         const positions = new Float32Array([
             0, 0, 0,
-            2, 3, 0,
-            0, 3, 0,
-
-            0, 0, 0,
             2, 0, 0,
-            2, 3, 0
+            1, 3, 0
         ]);
 
         const positionBuffer = new dgl.Buffer(positions, 3);
