@@ -14,8 +14,8 @@ export default class Socket extends EventEmitter {
         this._ws.addEventListener('message', this._onMessage.bind(this));
     }
 
-    sendMessage(message) {
-        this._ws.send(message);
+    send(message) {
+        this._ws.send(JSON.stringify(message));
     }
 
     _onMessage(ev) {

@@ -7,6 +7,7 @@ import Ship from './Ship';
 import Asteroid from './Asteroid';
 import Keyboard from './modules/Keyboard';
 import Player from './Player';
+import config from './config';
 
 export default class Game extends EventEmitter {
     constructor({state, socket}) {
@@ -40,6 +41,10 @@ export default class Game extends EventEmitter {
         this._loop = this._loop.bind(this);
 
         this._lastTimeUpdate = time();
+        this._lastTimeSend = 0;
+
+        this._socket.on('update', this._onSocketUpdate.bind(this));
+        this._updates = [];
 
         this._loop();
     }
@@ -98,12 +103,42 @@ export default class Game extends EventEmitter {
         this._mainPlayer = this.getPlayer(state.playerId);
     }
 
+    _updateState() {
+        for (let i = 0; i < this._updates.length; i++) {
+            this._setState(this._updates[i]);
+        }
+
+        this._updates = [];
+    }
+
+    _setState(state) {
+        state.bodies.forEach(bodyState => {
+            if (this._bodies[bodyState.id]) {
+                this._bodies[bodyState.id].setState(bodyState);
+            } else {
+                console.warn('Unknown body ' + bodyState.id);
+            }
+        });
+
+        state.players.forEach(playerState => {
+            if (this._players[playerState.id]) {
+                this._players[playerState.id].setState(playerState);
+            } else {
+                console.warn('Unknown player ' + playerState.id);
+            }
+        });
+    }
+
     _updateSize() {
         const width = window.innerWidth;
         const height = window.innerHeight;
         this._renderer.setSize(width, height);
         this._camera.aspect = width / height;
         this._camera.updateProjectionMatrix();
+    }
+
+    _onSocketUpdate(data) {
+        this._updates.push(data.state);
     }
 
     _loop() {
@@ -114,13 +149,13 @@ export default class Game extends EventEmitter {
         const now = time();
         const dt = now - this._lastTimeUpdate;
 
+        this._updateState();
+
         this._updateKeyboard();
 
         for (const id in this._bodies) {
             this._bodies[id].updateActions(now);
         }
-
-        this.emit('update', {now: now, dt: dt});
 
         this._world.step(dt);
 
@@ -132,7 +167,7 @@ export default class Game extends EventEmitter {
 
         this._renderer.render(this._scene, this._camera);
 
-        this.emit('render', {now: now, dt: dt});
+        this._sendActions(now);
 
         this._lastTimeUpdate = now;
 
@@ -172,5 +207,17 @@ export default class Game extends EventEmitter {
                 ship.useAction('strafeRight');
             }
         }
+    }
+
+    _sendActions(now) {
+        if (now - this._lastTimeSend < config.sendingInterval) { return; }
+
+        const actions = this._mainPlayer.getShip().getUsedActions();
+        this._socket.send({
+            type: 'update',
+            actions: actions
+        });
+
+        this._lastTimeSend = now;
     }
 }

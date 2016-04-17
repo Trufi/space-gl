@@ -46,6 +46,8 @@ export default class Ship extends Body {
 
         this.thrustForce = 0.0003;
         this.rotateForce = 0.0002;
+
+        this._usedActions = [];
     }
 
     updateActions(now) {
@@ -55,6 +57,15 @@ export default class Ship extends Body {
     }
 
     useAction(name) {
+        if (this.actions[name].isUsed()) { return; }
+
         this.actions[name].use();
+        this._usedActions.push(name);
+    }
+
+    getUsedActions() {
+        const result = this._usedActions;
+        this._usedActions = [];
+        return result;
     }
 }

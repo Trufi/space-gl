@@ -32,4 +32,8 @@ export default class Body {
     }
 
     updateActions() {}
+
+    useAction() {}
+
+    getUsedActions() {}
 }

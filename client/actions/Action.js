@@ -11,12 +11,14 @@ export default class Action {
     use() {
         const now = time();
 
-        if (this.isUsed(now)) { return; }
+        if (this.isUsed()) { return; }
 
         this._lastUsedTime = now;
     }
 
-    isUsed(now) {
+    isUsed() {
+        const now = time();
+
         return now - this._lastUsedTime < this.duration;
     }
 

@@ -43,6 +43,12 @@ export default class Game extends EventEmitter {
         player.on('leave', () => {
             this.removePlayer(player);
         });
+
+        player.on('update', data => {
+            data.actions.forEach(name => {
+                player.useAction(name);
+            });
+        });
     }
 
     removePlayer(player) {

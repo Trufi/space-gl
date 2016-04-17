@@ -26,7 +26,6 @@ export default class Player extends EventEmitter {
 
     addGame(game) {
         this._game = game;
-        this.emit('addGame');
     }
 
     getState() {
@@ -43,16 +42,30 @@ export default class Player extends EventEmitter {
         };
     }
 
+    useAction(name) {
+        this._ship.useAction(name);
+    }
+
     send(message) {
-        this._ws.send(JSON.stringify(message));
+        this._ws.send(JSON.stringify(message), this._errorHanlder);
     }
 
     _onMessage(ev) {
-        this.emit('message', ev.data);
+        const data = JSON.parse(ev);
+
+        if (data.type) {
+            this.emit(data.type, data);
+        }
     }
 
     _onClose() {
         this._connectionOpen = false;
         this.emit('leave');
+    }
+
+    _errorHanlder(error) {
+        if (error) {
+            console.error(error);
+        }
     }
 }
