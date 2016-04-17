@@ -13,7 +13,7 @@ export default class World{
         this._bodies[body.id] = body;
     }
 
-    remove(body) {
+    removeBody(body) {
         delete this._bodies[body.id];
     }
 }

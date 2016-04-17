@@ -2,7 +2,6 @@
  import Asteroid from './Asteroid';
  import Game from './Game';
  import Player from './Player/Player';
- import * as sockets from './sockets';
 
  const game = new Game();
 

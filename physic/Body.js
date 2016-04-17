@@ -30,4 +30,27 @@ export default class Body {
         this.force[1] = 0;
         this.angularForce = 0;
     }
+
+    getState() {
+        return {
+            position: [this.position[0], this.position[1]],
+            velocity: [this.velocity[0], this.velocity[1]],
+            angle: this.angle,
+            angularVelocity: this.angularVelocity,
+            force: this.force,
+            angularForce: this.angularForce
+        };
+    }
+
+    getAllState() {
+        return {
+            position: [this.position[0], this.position[1]],
+            velocity: [this.velocity[0], this.velocity[1]],
+            angle: this.angle,
+            angularVelocity: this.angularVelocity,
+            force: this.force,
+            angularForce: this.angularForce,
+            mass: this.mass
+        };
+    }
 }
