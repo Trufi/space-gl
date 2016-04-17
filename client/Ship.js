@@ -1,5 +1,4 @@
 import dgl from '2gl';
-import P from '../physic';
 
 import Body from './Body';
 import Thrust from './actions/Thrust';
@@ -10,8 +9,8 @@ import StrafeLeft from './actions/StrafeLeft';
 import StrafeRight from './actions/StrafeRight';
 
 export default class Ship extends Body {
-    constructor() {
-        super();
+    constructor(options) {
+        super(options);
 
         this.actions = {
             thrust: new Thrust(this),
@@ -22,7 +21,6 @@ export default class Ship extends Body {
             strafeRight: new StrafeRight(this)
         };
 
-        this.body = new P.Body();
         this.body.mass = 10;
 
         const positions = new Float32Array([
@@ -42,7 +40,6 @@ export default class Ship extends Body {
         mesh.position[1] = -1.5;
         mesh.updateLocalMatrix();
 
-        this.mesh = new dgl.Object3D();
         this.mesh.add(mesh);
 
         this._rotateAxis = dgl.vec3.fromValues(0, 0, -1);

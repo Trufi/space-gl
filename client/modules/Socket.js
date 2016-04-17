@@ -19,8 +19,10 @@ export default class Socket extends EventEmitter {
     }
 
     _onMessage(ev) {
-        if (!ev.data.type) { return; }
+        const data = JSON.parse(ev.data);
 
-        this.emit(ev.data.type, ev.data);
+        if (!data.type) { return; }
+
+        this.emit(data.type, data);
     }
 }

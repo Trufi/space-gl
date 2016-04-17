@@ -9,8 +9,8 @@ socket.on('open', () => {
     socket.on('first', onFirstState);
 });
 
-function onFirstState(state) {
-    game = new Game({state, socket});
+function onFirstState(data) {
+    game = new Game({state: data.state, socket});
 }
 
 // const ship = new Ship();

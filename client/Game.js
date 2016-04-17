@@ -5,12 +5,15 @@ import {bodyType} from '../physic/enums';
 import time from './utils/time';
 import Ship from './Ship';
 import Asteroid from './Asteroid';
+import Keyboard from './modules/Keyboard';
+import Player from './Player';
 
 export default class Game extends EventEmitter {
     constructor({state, socket}) {
         super();
 
         this._socket = socket;
+        this._keyboard = new Keyboard();
 
         this._world = new P.World();
 
@@ -53,13 +56,20 @@ export default class Game extends EventEmitter {
         delete this._bodies[body.id];
     }
 
+    getBody(id) {
+        return this._bodies[id];
+    }
+
     addPlayer(player) {
         this._players[player.id] = player;
-        player.addGame(this);
     }
 
     removePlayer(player) {
         delete this._players[player.id];
+    }
+
+    getPlayer(id) {
+        return this._players[id];
     }
 
     _initState(state) {
@@ -67,22 +77,25 @@ export default class Game extends EventEmitter {
             let body;
 
             if (bodyState.type === bodyType.SHIP) {
-                body = new Ship();
+                body = new Ship({state: bodyState});
             } else if (bodyState.type === bodyType.ASTEROID) {
-                body = new Asteroid();
+                body = new Asteroid({state: bodyState});
             } else {
                 return;
             }
 
-            body.setState(bodyState);
             this.addBody(body);
         });
 
         state.players.forEach(playerState => {
-            const player = new Player();
-            player.setState(playerState);
+            const player = new Player({
+                game: this,
+                state: playerState
+            });
             this.addPlayer(player);
         });
+
+        this._mainPlayer = this.getPlayer(state.playerId);
     }
 
     _updateSize() {
@@ -100,6 +113,8 @@ export default class Game extends EventEmitter {
 
         const now = time();
         const dt = now - this._lastTimeUpdate;
+
+        this._updateKeyboard();
 
         for (const id in this._bodies) {
             this._bodies[id].updateActions(now);
@@ -125,12 +140,37 @@ export default class Game extends EventEmitter {
     }
 
     _updateCamera() {
-        if (this._player && this._player._ship) {
-            const position = this._player._ship.body.position;
+        if (this._mainPlayer && this._mainPlayer._ship) {
+            const position = this._mainPlayer._ship.body.position;
 
             this._camera.position[0] = position[0];
             this._camera.position[1] = position[1];
             this._camera.updateLocalMatrix();
+        }
+    }
+
+    _updateKeyboard() {
+        const pressedKeys = this._keyboard.getPressedKeys();
+        const ship = this._mainPlayer.getShip();
+
+        for (let key in pressedKeys) {
+            if (pressedKeys[key] === false) { continue; }
+
+            key = Number(key);
+
+            if (key === Keyboard.FORWARD) {
+                ship.useAction('thrust');
+            } else if (key === Keyboard.BACK) {
+                ship.useAction('reverse');
+            } else if (key === Keyboard.LEFT) {
+                ship.useAction('left');
+            } else if (key === Keyboard.RIGHT) {
+                ship.useAction('right');
+            } else if (key === Keyboard.STRAFE_LEFT) {
+                ship.useAction('strafeLeft');
+            } else if (key === Keyboard.STRAFE_RIGHT) {
+                ship.useAction('strafeRight');
+            }
         }
     }
 }

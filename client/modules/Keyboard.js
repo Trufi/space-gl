@@ -1,6 +1,5 @@
 export default class Keyboard {
-    constructor(player) {
-        this._player = player;
+    constructor() {
         this._pressedKeys = {};
 
         this._initEvents();

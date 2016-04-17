@@ -1,6 +1,6 @@
 import {vec2} from 'gl-matrix';
 
-let idCounter = 0;
+let idCounter = 1;
 
 export default class Body {
     constructor() {
@@ -32,30 +32,30 @@ export default class Body {
     }
 
     setState(state) {
-        if (state.position) {
+        if (state.position !== undefined) {
             this.position[0] = state.position[0];
             this.position[1] = state.position[1];
         }
 
-        if (state.velocity) {
+        if (state.velocity !== undefined) {
             this.velocity[0] = state.velocity[0];
             this.velocity[1] = state.velocity[1];
         }
 
-        if (state.angle) {
+        if (state.angle !== undefined) {
             this.angle = state.angle;
         }
 
-        if (state.angularVelocity) {
+        if (state.angularVelocity !== undefined) {
             this.angularVelocity = state.angularVelocity;
         }
 
-        if (state.force) {
+        if (state.force !== undefined) {
             this.force[0] = state.force[0];
             this.force[1] = state.force[1];
         }
 
-        if (state.mass) {
+        if (state.mass !== undefined) {
             this.mass = state.mass;
         }
     }
@@ -77,7 +77,7 @@ export default class Body {
             velocity: [this.velocity[0], this.velocity[1]],
             angle: this.angle,
             angularVelocity: this.angularVelocity,
-            force: this.force,
+            force: [this.force[0], this.force[1]],
             angularForce: this.angularForce,
             mass: this.mass
         };

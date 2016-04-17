@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 
-let idCounter = 0;
+let idCounter = 1;
 
 export default class Player extends EventEmitter {
     constructor(ws) {
@@ -38,6 +38,7 @@ export default class Player extends EventEmitter {
     getAllState() {
         return {
             id: this.id,
+            name: this.name,
             shipId: this._ship.id
         };
     }

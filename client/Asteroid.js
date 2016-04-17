@@ -1,13 +1,11 @@
 import dgl from '2gl';
-import P from '../physic';
 
 import Body from './Body';
 
-export default class Ship extends Body {
-    constructor() {
-        super();
+export default class Asteroid extends Body {
+    constructor(options) {
+        super(options);
 
-        this.body = new P.Body();
         this.body.mass = 1000;
 
         const positions = new Float32Array([
@@ -31,7 +29,6 @@ export default class Ship extends Body {
         mesh.position[1] = -2.5;
         mesh.updateLocalMatrix();
 
-        this.mesh = new dgl.Object3D();
         this.mesh.add(mesh);
 
         this._rotateAxis = dgl.vec3.fromValues(0, 0, -1);

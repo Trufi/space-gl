@@ -1,19 +1,27 @@
 import dgl from '2gl';
 import P from '../physic';
 
-let idCounter = 0;
-
 export default class Body {
-    constructor() {
-        this.id = idCounter++;
-
+    constructor({state}) {
         this.body = new P.Body();
         this.mesh = new dgl.Object3D();
+
+        this.setState(state);
     }
 
     setPosition(x, y) {
         this.body.position[0] = x;
         this.body.position[1] = y;
+    }
+
+    setState(state) {
+        if (state.id !== undefined) {
+            this.id = state.id;
+        }
+
+        if (state.body !== undefined) {
+            this.body.setState(state.body);
+        }
     }
 
     update() {

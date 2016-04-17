@@ -1,6 +1,6 @@
 import P from '../physic';
 
-let idCounter = 0;
+let idCounter = 1;
 
 export default class Body {
     constructor() {
