@@ -8,13 +8,14 @@ export function init(server) {
     wss.on('connection', onConnection);
 }
 
-function onConnection(socket) {
+function onConnection(ws) {
     console.log('new connection');
 
-    socket.on('message', onMessage);
+    ws.on('message', onMessage);
 }
 
-function onMessage(message) {
+function onMessage(message, flags) {
     console.log('message', message);
+    console.log('flags', flags);
     console.log(new Float32Array(new Uint8Array(message).buffer));
 }
