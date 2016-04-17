@@ -1,22 +1,19 @@
 import Stats from 'stats.js';
 
 export default class Debug {
-    constructor(player) {
-        this._player = player;
-
-        this._onAddGame = this._onAddGame.bind(this);
-        player.on('addGame', this._onAddGame);
+    constructor(game) {
+        this._game = game;
 
         this._html = document.getElementById('debug');
 
         this._statsHtml = document.createElement('div');
         this._html.appendChild(this._statsHtml);
 
-        window.debug = this;
-    }
+        this._pingHtml = document.createElement('div');
+        this._html.appendChild(this._pingHtml);
 
-    _onAddGame() {
-        this._game = this._player._game;
+        window.debug = this;
+
         this._stats = new Stats();
 
         this._game.on('frameStart', () => {
@@ -27,9 +24,11 @@ export default class Debug {
             this._stats.frameEnd();
         });
 
-        this._game.on('render', () => {
+        this._game.on('update', () => {
             // this._statsHtml.innerHTML = this._stats.getHtmlText();
             this._statsHtml.innerHTML = this._stats.get('fps').getLast() + 'fps';
+            this._pingHtml.innerHTML = 'Ping: ' + this._game._ping.getPing() + ' dvt: ' +
+                this._game._ping._stats.get('ping').getDeviation() + '<br />Delta: ' + this._game._ping.getDelta();
         });
     }
 }

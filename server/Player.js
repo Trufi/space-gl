@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+import time from './utils/time';
 
 let idCounter = 1;
 
@@ -53,7 +54,9 @@ export default class Player extends EventEmitter {
     _onMessage(ev) {
         const data = JSON.parse(ev);
 
-        if (data.type) {
+        if (data.type === 'ping') {
+            this.send({type: 'pong', time: time()});
+        } else if (data.type) {
             this.emit(data.type, data);
         }
     }

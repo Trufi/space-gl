@@ -6,6 +6,8 @@ import time from './utils/time';
 import Ship from './Ship';
 import Asteroid from './Asteroid';
 import Keyboard from './modules/Keyboard';
+import Ping from './modules/Ping';
+import Debug from './modules/Debug';
 import Player from './Player';
 import config from './config';
 
@@ -15,6 +17,8 @@ export default class Game extends EventEmitter {
 
         this._socket = socket;
         this._keyboard = new Keyboard();
+        this._ping = new Ping(this);
+        this._debug = new Debug(this);
 
         this._world = new P.World();
 
@@ -164,6 +168,8 @@ export default class Game extends EventEmitter {
         }
 
         this._updateCamera();
+
+        this.emit('update', {now: now, dt: dt});
 
         this._renderer.render(this._scene, this._camera);
 
