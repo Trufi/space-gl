@@ -1,18 +1,26 @@
- import Ship from './Ship';
- import Asteroid from './Asteroid';
- import Game from './Game';
- import Player from './Player/Player';
+import Game from './Game';
 
- const game = new Game();
+import Socket from './modules/Socket';
 
- const ship = new Ship();
- const asteroid = new Asteroid();
- asteroid.setPosition(10, 0);
+const socket = new Socket();
+let game;
 
- const player = new Player();
- player.setShip(ship);
+socket.on('open', () => {
+    socket.on('first', onFirstState);
+});
 
- game.addBody(ship);
- game.addBody(asteroid);
+function onFirstState(state) {
+    game = new Game({state, socket});
+}
 
- game.addPlayer(player);
+// const ship = new Ship();
+// const asteroid = new Asteroid();
+// asteroid.setPosition(10, 0);
+//
+// const player = new Player();
+// player.setShip(ship);
+//
+// game.addBody(ship);
+// game.addBody(asteroid);
+//
+// game.addPlayer(player);

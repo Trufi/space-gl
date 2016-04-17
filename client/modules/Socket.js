@@ -8,19 +8,19 @@ export default class Socket extends EventEmitter {
         this._ws.binaryType = 'arraybuffer';
 
         this._ws.addEventListener('open', () => {
-            this._isOpen = true;
+            this.emit('open');
         });
 
         this._ws.addEventListener('message', this._onMessage.bind(this));
     }
 
     sendMessage(message) {
-        if (!this._isOpen) { return; }
-
         this._ws.send(message);
     }
 
     _onMessage(ev) {
-        this.emit('message', {data: ev.data});
+        if (!ev.data.type) { return; }
+
+        this.emit(ev.data.type, ev.data);
     }
 }

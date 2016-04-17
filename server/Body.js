@@ -7,6 +7,8 @@ export default class Body {
         this.id = idCounter++;
 
         this.body = new P.Body();
+
+        this.type = 0;
     }
 
     setPosition(x, y) {
@@ -26,6 +28,7 @@ export default class Body {
     getAllState() {
         return {
             id: this.id,
+            type: this.type,
             body: this.body.getAllState()
         };
     }

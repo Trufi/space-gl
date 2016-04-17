@@ -1,14 +1,16 @@
 import EventEmitter from 'events';
 import dgl from '2gl';
 import P from '../physic';
+import {bodyType} from '../physic/enums';
 import time from './utils/time';
-import Socket from './modules/Socket';
+import Ship from './Ship';
+import Asteroid from './Asteroid';
 
 export default class Game extends EventEmitter {
-    constructor() {
+    constructor({state, socket}) {
         super();
 
-        this._socket = new Socket();
+        this._socket = socket;
 
         this._world = new P.World();
 
@@ -26,6 +28,11 @@ export default class Game extends EventEmitter {
         window.addEventListener('resize', this._updateSize.bind(this));
 
         this._bodies = {};
+        this._players = {};
+
+        this._mainPlayer = null;
+
+        this._initState(state);
 
         this._loop = this._loop.bind(this);
 
@@ -40,9 +47,42 @@ export default class Game extends EventEmitter {
         this._bodies[body.id] = body;
     }
 
+    removeBody(body) {
+        this._world.removeBody(body.body);
+        this._scene.remove(body.mesh);
+        delete this._bodies[body.id];
+    }
+
     addPlayer(player) {
-        this._player = player;
+        this._players[player.id] = player;
         player.addGame(this);
+    }
+
+    removePlayer(player) {
+        delete this._players[player.id];
+    }
+
+    _initState(state) {
+        state.bodies.forEach(bodyState => {
+            let body;
+
+            if (bodyState.type === bodyType.SHIP) {
+                body = new Ship();
+            } else if (bodyState.type === bodyType.ASTEROID) {
+                body = new Asteroid();
+            } else {
+                return;
+            }
+
+            body.setState(bodyState);
+            this.addBody(body);
+        });
+
+        state.players.forEach(playerState => {
+            const player = new Player();
+            player.setState(playerState);
+            this.addPlayer(player);
+        });
     }
 
     _updateSize() {

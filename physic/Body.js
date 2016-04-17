@@ -31,13 +31,42 @@ export default class Body {
         this.angularForce = 0;
     }
 
+    setState(state) {
+        if (state.position) {
+            this.position[0] = state.position[0];
+            this.position[1] = state.position[1];
+        }
+
+        if (state.velocity) {
+            this.velocity[0] = state.velocity[0];
+            this.velocity[1] = state.velocity[1];
+        }
+
+        if (state.angle) {
+            this.angle = state.angle;
+        }
+
+        if (state.angularVelocity) {
+            this.angularVelocity = state.angularVelocity;
+        }
+
+        if (state.force) {
+            this.force[0] = state.force[0];
+            this.force[1] = state.force[1];
+        }
+
+        if (state.mass) {
+            this.mass = state.mass;
+        }
+    }
+
     getState() {
         return {
             position: [this.position[0], this.position[1]],
             velocity: [this.velocity[0], this.velocity[1]],
             angle: this.angle,
             angularVelocity: this.angularVelocity,
-            force: this.force,
+            force: [this.force[0], this.force[1]],
             angularForce: this.angularForce
         };
     }

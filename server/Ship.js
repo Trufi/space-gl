@@ -1,4 +1,5 @@
 import P from '../physic';
+import {bodyType} from '../physic/enums';
 
 import Body from './Body';
 import Thrust from './actions/Thrust';
@@ -23,6 +24,8 @@ export default class Ship extends Body {
 
         this.body = new P.Body();
         this.body.mass = 10;
+
+        this.type = bodyType.SHIP;
 
         this.thrustForce = 0.0003;
         this.rotateForce = 0.0002;
