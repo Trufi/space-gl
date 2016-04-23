@@ -12,9 +12,11 @@ export default class Body {
         this.force = vec2.create();
         this.angularForce = 0;
         this.mass = 0;
+
+        this.onlyInterpolate = true;
     }
 
-    step(dt) {
+    step(now, dt) {
         if (this.mass === 0) { return; }
 
         this.velocity[0] += this.force[0] / this.mass * dt;
@@ -29,6 +31,13 @@ export default class Body {
         this.force[0] = 0;
         this.force[1] = 0;
         this.angularForce = 0;
+    }
+
+    interpolate(now, dt, stateA, stateB) {
+        // если нет данных, то ничего не делаем
+        if (!stateA || !stateB) { return; }
+
+        
     }
 
     setState(state) {

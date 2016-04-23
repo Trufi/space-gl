@@ -113,6 +113,10 @@ export default class Game extends EventEmitter {
             this._setState(this._statesFromServer[i]);
         }
 
+        if (this._mainPlayer) {
+            
+        }
+
         this._statesFromServer = [];
     }
 
