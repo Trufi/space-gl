@@ -5,6 +5,13 @@ import time from '../utils/time';
 export default class Ping {
     constructor(game) {
         this._stats = new Stats();
+
+        this._pingCounter = this._stats.get('ping');
+        this._pingCounter.sampleLimit = 10;
+
+        this._deltaCounter = this._stats.get('delta');
+        this._deltaCounter.sampleLimit = 10;
+
         this._game = game;
         this._socket = game._socket;
 
@@ -17,11 +24,11 @@ export default class Ping {
     }
 
     getPing() {
-        return this._stats.get('ping').getMean();
+        return this._pingCounter.getMean();
     }
 
     getDelta() {
-        return this._stats.get('delta').getMean();
+        return this._deltaCounter.getMean();
     }
 
     _onUpdate({now}) {

@@ -28,7 +28,7 @@ export default class Debug {
             // this._statsHtml.innerHTML = this._stats.getHtmlText();
             this._statsHtml.innerHTML = this._stats.get('fps').getLast() + 'fps';
             this._pingHtml.innerHTML = 'Ping: ' + this._game._ping.getPing() + ' dvt: ' +
-                this._game._ping._stats.get('ping').getDeviation() + '<br />Delta: ' + this._game._ping.getDelta();
+                this._game._ping._pingCounter.getDeviation() + '<br />Delta: ' + this._game._ping.getDelta();
         });
     }
 }

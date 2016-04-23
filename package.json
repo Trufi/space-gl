@@ -30,7 +30,7 @@
     "bufferutil": "^1.2.1",
     "express": "^4.13.4",
     "gl-matrix": "2.3.1",
-    "stats.js": "git://github.com/Trufi/Stats.js#v2.0.4",
+    "stats.js": "git://github.com/Trufi/Stats.js#v2.1.0",
     "uglify-js": "^2.6.2",
     "utf-8-validate": "^1.2.1",
     "ws": "^1.1.0"
