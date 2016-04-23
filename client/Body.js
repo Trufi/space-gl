@@ -14,6 +14,13 @@ export default class Body {
         this.body.position[1] = y;
     }
 
+    getState() {
+        return {
+            id: this.id,
+            body: this.body.getState()
+        };
+    }
+
     setState(state) {
         if (state.id !== undefined) {
             this.id = state.id;

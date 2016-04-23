@@ -48,7 +48,8 @@ export default class Game extends EventEmitter {
         this._lastTimeSend = 0;
 
         this._socket.on('update', this._onSocketUpdate.bind(this));
-        this._updates = [];
+        this._statesFromServer = [];
+        this._mainPlayerBodyStates = [];
 
         this._loop();
     }
@@ -108,17 +109,27 @@ export default class Game extends EventEmitter {
     }
 
     _updateState() {
-        for (let i = 0; i < this._updates.length; i++) {
-            this._setState(this._updates[i]);
+        for (let i = 0; i < this._statesFromServer.length; i++) {
+            this._setState(this._statesFromServer[i]);
         }
 
-        this._updates = [];
+        this._statesFromServer = [];
     }
 
     _setState(state) {
+        let mainPlayerShip;
+
+        if (this._mainPlayer) {
+            mainPlayerShip = this._mainPlayer.getShip();
+        }
+
         state.bodies.forEach(bodyState => {
-            if (this._bodies[bodyState.id]) {
-                this._bodies[bodyState.id].setState(bodyState);
+            const body = this._bodies[bodyState.id];
+
+            if (body) {
+                if (body !== mainPlayerShip) {
+                    body.setState(bodyState);
+                }
             } else {
                 console.warn('Unknown body ' + bodyState.id);
             }
@@ -142,7 +153,8 @@ export default class Game extends EventEmitter {
     }
 
     _onSocketUpdate(data) {
-        this._updates.push(data.state);
+        data.state.now += this._ping.getDelta();
+        this._statesFromServer.push(data.state);
     }
 
     _loop() {
@@ -175,6 +187,8 @@ export default class Game extends EventEmitter {
 
         this._sendActions(now);
 
+        this._saveMainPlayerState(now);
+
         this._lastTimeUpdate = now;
 
         this.emit('frameEnd');
@@ -187,6 +201,15 @@ export default class Game extends EventEmitter {
             this._camera.position[0] = position[0];
             this._camera.position[1] = position[1];
             this._camera.updateLocalMatrix();
+        }
+    }
+
+    _saveMainPlayerState(now) {
+        if (this._mainPlayer) {
+            this._mainPlayerBodyStates.push({
+                time: now,
+                state: this._mainPlayer.getShip().getState()
+            });
         }
     }
 
