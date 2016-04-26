@@ -1,4 +1,5 @@
 import {vec2} from 'gl-matrix';
+import Interpolation from './Interpolation';
 
 let idCounter = 1;
 
@@ -13,7 +14,9 @@ export default class Body {
         this.angularForce = 0;
         this.mass = 0;
 
-        this.onlyInterpolate = true;
+        this.onlyInterpolate = false;
+        this._lastInterpolateState = null;
+        this._interpolation = null;
     }
 
     step(now, dt) {
@@ -33,11 +36,41 @@ export default class Body {
         this.angularForce = 0;
     }
 
-    interpolate(now, dt, stateA, stateB) {
+    interpolate(now, dt, interpolateState) {
         // если нет данных, то ничего не делаем
-        if (!stateA || !stateB) { return; }
+        if (!interpolateState) { return; }
 
-        
+        if (this._lastInterpolateState !== interpolateState) {
+            this._createNewInterpolation(now, interpolateState);
+            this._lastInterpolateState = interpolateState;
+        }
+
+        const newValues = this._interpolation.step(now);
+
+        if (!newValues) {
+            console.warn('Interpolation step return null');
+            return;
+        }
+
+        this.position[0] = newValues[0];
+        this.position[1] = newValues[1];
+        this.angle = newValues[1];
+    }
+
+    _createNewInterpolation(now, interpolateState) {
+        const state = interpolateState.state;
+
+        // Интерполируем только положение и угл поворота
+        const startArray = [this.position[0], this.position[1], this.angle];
+        const endArray = [state.position[0], state.position[1], state.angle];
+
+        this._interpolation = new Interpolation({
+            values: startArray,
+            time: now
+        }, {
+            values: endArray,
+            time: interpolateState.time
+        });
     }
 
     setState(state) {

@@ -21,6 +21,7 @@ export default class Game extends EventEmitter {
         this._debug = new Debug(this);
 
         this._world = new P.World();
+        this._world.needInterpolation = true;
 
         this._renderer = new dgl.Renderer({
             canvas: 'canvas',
@@ -110,30 +111,18 @@ export default class Game extends EventEmitter {
 
     _updateState() {
         for (let i = 0; i < this._statesFromServer.length; i++) {
-            this._setState(this._statesFromServer[i]);
-        }
-
-        if (this._mainPlayer) {
-            
+            this._world.addState(this._statesFromServer[i]);
         }
 
         this._statesFromServer = [];
     }
 
     _setState(state) {
-        let mainPlayerShip;
-
-        if (this._mainPlayer) {
-            mainPlayerShip = this._mainPlayer.getShip();
-        }
-
         state.bodies.forEach(bodyState => {
             const body = this._bodies[bodyState.id];
 
             if (body) {
-                if (body !== mainPlayerShip) {
-                    body.setState(bodyState);
-                }
+                body.setState(bodyState);
             } else {
                 console.warn('Unknown body ' + bodyState.id);
             }
@@ -157,7 +146,7 @@ export default class Game extends EventEmitter {
     }
 
     _onSocketUpdate(data) {
-        data.state.now += this._ping.getDelta();
+        data.state.time += this._ping.getDelta();
         this._statesFromServer.push(data.state);
     }
 

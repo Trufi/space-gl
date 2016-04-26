@@ -5,27 +5,27 @@ export default class World{
         this.interpolateThreshold = 300;
         this._states = [];
 
-        this._interpolateStateA = null;
-        this._interpolateStateB = null;
+        this._interpolateState = null;
+        this.needInterpolation = false;
     }
 
     step(now, dt) {
-        if (this._interpolateStateB.time < now) {
-            this._searchTwoStates(now);
+        if (this.needInterpolation &&
+            (!this._interpolateState || this._interpolateState.time < now)
+        ) {
+            this._searchInterpolationState(now);
         }
-
-        const canInterpolate = this._interpolateStateA && this._interpolateStateB;
 
         for (const id in this._bodies) {
             const body = this._bodies[id];
 
             if (body.onlyInterpolate) {
-                if (canInterpolate) {
-                    body.interpolate(now, dt,
-                        this._interpolateStateA.bodies[id],
-                        this._interpolateStateB.bodies[id]
-                    );
-                }
+                if (!this._interpolateState) { continue; }
+
+                body.interpolate(now, dt, {
+                    state: this._interpolateState.bodies[id],
+                    time: this._interpolateState.time
+                });
             } else {
                 body.step(now, dt);
             }
@@ -51,36 +51,26 @@ export default class World{
         return b.time < a.time;
     }
 
-    _searchTwoStates(now) {
+    _searchInterpolationState(now) {
         const states = this._states;
-        let stateA, stateB;
+        let i;
 
-        for (let i = states.length; i > -1; i--) {
+        for (i = states.length - 1; i > -1; i--) {
             const state = states[i];
 
             // если разница между текущим временем и временем стейта меньше порога, то скипаем
-            if (now - state.time < this.interpolateThreshold) { continue; }
+            if (state.time > now - this.interpolateThreshold) { continue; }
 
-            // если текущие время меньше времени стейта, то это правая точка интерполяции
-            if (now < state.time) {
-                stateB = state;
-            }
-
-            // если текущие время больше времени стейта, то это левая точка интерполяции
-            if (state.time < now) {
-                stateA = state;
-            }
-
-            // если найдены левая и правая точка, то заканчиваем
-            if (stateA && stateB) {
-                this._interpolateStateA = stateA;
-                this._interpolateStateB = stateB;
-
-                // удаляем стейты, которые уже никому не нужны
-                this._states.splice(0, i);
-
-                return;
-            }
+            if (state.time < now - this.interpolateThreshold) { break; }
         }
+
+        const state = states[i + 1];
+
+        if (!states[i + 1]) { return; }
+
+        this._interpolateState = state;
+
+        // удаляем стейты, которые уже никому не нужны
+        this._states.splice(0, i);
     }
 }

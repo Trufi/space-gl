@@ -4,6 +4,8 @@ import P from '../physic';
 export default class Body {
     constructor({state}) {
         this.body = new P.Body();
+        this.body.onlyInterpolate = true;
+
         this.mesh = new dgl.Object3D();
 
         this.setState(state);

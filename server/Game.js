@@ -66,7 +66,7 @@ export default class Game extends EventEmitter {
             this._bodies[id].updateActions(now);
         }
 
-        this._world.step(dt);
+        this._world.step(now, dt);
 
         this._sendState(now);
 
@@ -101,7 +101,7 @@ export default class Game extends EventEmitter {
         }
 
         return {
-            now: now,
+            time: now,
             bodies: bodies,
             players: players
         };
