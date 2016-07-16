@@ -26,7 +26,7 @@ export default class Interpolation {
      * @returns {?Array}
      */
     step(currentTime) {
-        if (this._start.time >= currentTime || this._end.time <= currentTime) {
+        if (this._start.time > currentTime || this._end.time < currentTime) {
             return null;
         }
 

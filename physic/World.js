@@ -22,9 +22,13 @@ export default class World{
             if (body.onlyInterpolate) {
                 if (!this._interpolateState) { continue; }
 
+                const interpolateBody = this._interpolateState.bodies[id];
+
+                if (!interpolateBody) { continue; }
+
                 body.interpolate(now, dt, {
-                    state: this._interpolateState.bodies[id],
-                    time: this._interpolateState.time
+                    state: interpolateBody.body,
+                    time: this._interpolateState.time + this.interpolateThreshold
                 });
             } else {
                 body.step(now, dt);
@@ -53,6 +57,7 @@ export default class World{
 
     _searchInterpolationState(now) {
         const states = this._states;
+        let finded = false;
         let i;
 
         for (i = states.length - 1; i > -1; i--) {
@@ -61,7 +66,14 @@ export default class World{
             // если разница между текущим временем и временем стейта меньше порога, то скипаем
             if (state.time > now - this.interpolateThreshold) { continue; }
 
-            if (state.time < now - this.interpolateThreshold) { break; }
+            if (state.time < now - this.interpolateThreshold) {
+                finded = true;
+                break;
+            }
+        }
+
+        if (!finded) {
+            return;
         }
 
         const state = states[i + 1];

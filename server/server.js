@@ -28,7 +28,10 @@ app.use((error, req, res, next) => {
 const wsServer = new ws.Server({server: server});
 wsServer.on('connection', ws => {
     const player = new Player(ws);
-    const ship = new Ship();
-    player.setShip(ship);
-    game.addPlayer(player);
+
+    player.once('ready', () => {
+        const ship = new Ship();
+        player.setShip(ship);
+        game.addPlayer(player);
+    });
 });

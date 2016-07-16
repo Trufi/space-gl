@@ -1,16 +1,27 @@
 import Game from './Game';
 
 import Socket from './modules/Socket';
+import Ping from './modules/Ping';
 
 const socket = new Socket();
 let game;
+let interval;
+let ping;
 
 socket.on('open', () => {
-    socket.on('first', onFirstState);
+    ping = new Ping(socket);
+
+    interval = setInterval(() => {
+        if (ping.isDeltaStable()) {
+            socket.send({type: 'ready'});
+            socket.once('first', onFirstState);
+            clearInterval(interval);
+        }
+    }, 100);
 });
 
 function onFirstState(data) {
-    game = new Game({state: data.state, socket});
+    game = new Game({state: data.state, socket, ping});
 }
 
 // const ship = new Ship();

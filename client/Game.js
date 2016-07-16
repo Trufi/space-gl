@@ -6,18 +6,17 @@ import time from './utils/time';
 import Ship from './Ship';
 import Asteroid from './Asteroid';
 import Keyboard from './modules/Keyboard';
-import Ping from './modules/Ping';
 import Debug from './modules/Debug';
 import Player from './Player';
 import config from './config';
 
 export default class Game extends EventEmitter {
-    constructor({state, socket}) {
+    constructor({state, socket, ping}) {
         super();
 
         this._socket = socket;
+        this._ping = ping;
         this._keyboard = new Keyboard();
-        this._ping = new Ping(this);
         this._debug = new Debug(this);
 
         this._world = new P.World();
@@ -166,7 +165,7 @@ export default class Game extends EventEmitter {
             this._bodies[id].updateActions(now);
         }
 
-        this._world.step(dt);
+        this._world.step(now, dt);
 
         for (const id in this._bodies) {
             this._bodies[id].update(dt);

@@ -3,7 +3,7 @@ import Stats from 'stats.js';
 import time from '../utils/time';
 
 export default class Ping {
-    constructor(game) {
+    constructor(socket) {
         this._stats = new Stats();
 
         this._pingCounter = this._stats.get('ping');
@@ -12,15 +12,12 @@ export default class Ping {
         this._deltaCounter = this._stats.get('delta');
         this._deltaCounter.sampleLimit = 10;
 
-        this._game = game;
-        this._socket = game._socket;
+        this._socket = socket;
 
-        this._game.on('update', this._onUpdate.bind(this));
+        this._interval = setInterval(this._onUpdate.bind(this), 1000);
         this._socket.on('pong', this._onPong.bind(this));
 
-        this._lastTimePing = 0;
-
-        this._pingInterval = 1000;
+        this._lastTimePing = -Infinity;
     }
 
     getPing() {
@@ -31,12 +28,15 @@ export default class Ping {
         return this._deltaCounter.getMean();
     }
 
-    _onUpdate({now}) {
-        if (now - this._lastTimePing < this._pingInterval) { return; }
+    isDeltaStable() {
+        const counter = this._deltaCounter;
+        return counter.getLength() > 0 && counter.getDeviation() < 10;
+    }
 
+    _onUpdate() {
         this._socket.send({type: 'ping'});
 
-        this._lastTimePing = now;
+        this._lastTimePing = time();
     }
 
     _onPong(data) {
